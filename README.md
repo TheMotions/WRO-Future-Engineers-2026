@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/TheMotions.png" width="180" style="border-radius:50%" alt="The Motions Logo"/>
+<img src="https://github.com/TheMotions.png" width="340" style="border-radius:50%" alt="The Motions Logo"/>
 
 # The Motions — WRO Future Engineers 2026
 
