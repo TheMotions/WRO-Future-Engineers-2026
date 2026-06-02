@@ -234,7 +234,8 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 **Print Settings:** PLA · 20% infill · 0.2 mm layer height
 
 <div align="center">
-<img width="500" src="<img width="1195" height="896" alt="image" src="https://github.com/user-attachments/assets/43e2721b-7e50-4c6b-a0b9-4e13a77da67e" />
+<img width="500" src="<img width="1195" height="896" alt="image" src="https://github.com/user-attachments/assets/450ecdc3-dc6c-4dc1-82c0-f9bb397f3465" />
+" />
 " alt="3D Model"/>
 <br/><sub>3D printed electronics tray and sensor mounts</sub>
 </div>
