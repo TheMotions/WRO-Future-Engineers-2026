@@ -265,7 +265,8 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 <br/><sub><b>Right</b></sub></td>
     <td align="center"><img width="230" src="https://github.com/user-attachments/assets/e34e684f-ff2f-4c06-8861-a87f1982d041" />
 <br/><sub><b>Top</b></sub></td>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/afcc0fe8-2d0e-4aef-aea4-6d611f3f30ef"/><br/><sub><b>Bottom</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/6788e1ae-b306-427e-af6d-16fb11b72219" />
+<br/><sub><b>Bottom</b></sub></td>
   </tr>
 </table>
 </div>
