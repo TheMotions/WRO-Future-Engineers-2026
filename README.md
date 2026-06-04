@@ -97,7 +97,7 @@ WRO-Future-Engineers-2026/
 
 <div align="center">
 <img width="500" src="https://github.com/user-attachments/assets/9c7952be-69de-42f3-882a-6eecc17a7bac" />
-" alt="Component Layout"/>
+ alt="Component Layout"/>
 <br/><sub>Robot component layout</sub>
 </div>
 
