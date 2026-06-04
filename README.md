@@ -96,7 +96,8 @@ WRO-Future-Engineers-2026/
 - ⚖️ Mass: ~0.5 kg *(within 1.5 kg limit ✅)*
 
 <div align="center">
-<img width="500" src="https://github.com/user-attachments/assets/b178bf55-6c87-4521-a2f3-9c944bf2b491" alt="Component Layout"/>
+<img width="500" src="https://github.com/user-attachments/assets/9c7952be-69de-42f3-882a-6eecc17a7bac" />
+" alt="Component Layout"/>
 <br/><sub>Robot component layout</sub>
 </div>
 
