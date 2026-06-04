@@ -138,7 +138,8 @@ LiPo 7.4V
 📄 **[Full Wiring Diagram (PDF)](Schemes/Schematic_Wiring_Diagram.pdf)**
 
 <div align="center">
-<img width="500" src="https://github.com/user-attachments/assets/b750eb5a-1c5d-4c75-9160-fdc2dd91ea35" alt="Lab Setup"/>
+<img width="500"  src="https://github.com/user-attachments/assets/6392126d-c2e6-4422-b1bd-10d1b5243850" />
+" alt="Lab Setup"/>
 <br/><sub>Development tools and lab setup</sub>
 </div>
 
