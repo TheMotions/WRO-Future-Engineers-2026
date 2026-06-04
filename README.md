@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://github.com/TheMotions.png" width="340" style="border-radius:50%" alt="The Motions Logo"/>
+<img src="https://github.com/TheMotions.png" width="150" style="border-radius:50%" alt="The Motions"/>
 
-# The Motions — WRO Future Engineers 2026
-
-### Kuwait National Qualifier &nbsp;·&nbsp; May 31, 2026
+# The Motions
+### Autonomous Self-Driving Vehicle — WRO Future Engineers 2026
+Kuwait National Qualifier
 
 ![Arduino](https://img.shields.io/badge/Arduino-Uno-00979D?style=flat-square&logo=arduino&logoColor=white)
 ![Language](https://img.shields.io/badge/Language-C%2FC%2B%2B-A97BFF?style=flat-square&logo=c%2B%2B&logoColor=white)
@@ -12,69 +12,46 @@
 ![Status](https://img.shields.io/badge/Status-Competition%20Ready-success?style=flat-square)
 ![Kuwait](https://img.shields.io/badge/Country-Kuwait-007A3D?style=flat-square)
 
+*Two ultrasonic eyes, one vision camera, and a tightly tuned PD loop — three laps, zero contact.*
+
 </div>
 
 ---
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Repository Structure](#repository-structure)
-- [Hardware & Components](#hardware--components)
-- [Electrical System](#electrical-system)
-- [Software Architecture](#software-architecture)
-- [Wall-Following Controller](#wall-following-controller)
-- [Obstacle Detection & Avoidance](#obstacle-detection--avoidance)
-- [3D Design](#3d-design)
-- [Robot Photos](#robot-photos)
-- [Testing & Calibration](#testing--calibration)
-- [Results](#results)
-- [Video Demonstrations](#video-demonstrations)
-- [Team](#team)
+| | | |
+|---|---|---|
+| [Overview](#project-overview) | [Hardware](#hardware--components) | [Electronics](#electrical-system) |
+| [Software](#software-architecture) | [Wall Following](#wall-following-controller) | [Vision & Obstacles](#obstacle-detection--avoidance) |
+| [3D Design](#3d-design) | [Photos](#robot-photos) | [Testing](#testing--calibration) |
+| [Results](#results) | [Video](#video-demonstrations) | [Team](#team) |
 
 ---
 
 ## Project Overview
 
-**The Motions** is a Kuwaiti robotics team competing in the **WRO Future Engineers 2026** challenge. Our autonomous vehicle completes three laps on a closed track with randomly placed colored traffic pillars, using real-time sensor fusion between ultrasonic distance sensors and a Pixy2 color vision system.
+The Motions fields a compact, fully autonomous 1:28-scale vehicle for the **WRO Future Engineers 2026** category. On a closed track seeded with randomly placed colored pillars, the car must drive three uninterrupted laps — centering itself between the walls and obeying each pillar's pass-side rule — entirely on its own.
 
-### System Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│                  Arduino Uno (ATmega328P)            │
-│                                                     │
-│  HC-SR04 Left ──→ PD Controller ──→ Servo (A0)      │
-│  HC-SR04 Right ─┘      ↑                            │
-│                   Mode Manager                       │
-│  Pixy2 Camera ─────────┘         Cytron MD13S        │
-│                                   └──→ DC Motor      │
-└─────────────────────────────────────────────────────┘
-```
-
-The system runs two interleaved control modes:
-- **PID Mode** — Ultrasonic-driven wall centering
-- **Pixy Mode** — Vision-driven pillar avoidance
-
----
-
-## Repository Structure
+The design philosophy is deliberately lean: **two ultrasonic sensors** for wall geometry, **one Pixy2 camera** for color decisions, and a single Arduino Uno running a carefully damped PD controller. No excess sensors, no excess weight — just a clean, repeatable control loop.
 
 ```
-WRO-Future-Engineers-2026/
-│
-├── src/
-│   ├── Open_Challenge/
-│   │   └── Open_Challenge.ino         ← Wall-following PD controller
-│   └── Obstacle_Challenge/
-│       └── Obstacle_Challenge.ino     ← PD + Pixy2 vision avoidance
-│
-├── Vehicle_Photos/                    ← 6-angle robot documentation
-├── Models/                            ← 3D printed parts (.3mf files)
-├── Schemes/                           ← Wiring diagram & schematic
-├── videos/                            ← Demo videos
-└── docs/                              ← Assets & diagrams
+┌──────────────────────────────────────────────────────────┐
+│                 Arduino Uno  (ATmega328P)                 │
+│                                                          │
+│   HC-SR04 Left  ─┐                                       │
+│                  ├─→  PD core  ──→  Mode manager ──┐     │
+│   HC-SR04 Right ─┘                                  │     │
+│                                                     ▼     │
+│   Pixy2 camera ───────────────────────→  Servo (A0)      │
+│                                          Cytron MD13S ──→ DC motor
+└──────────────────────────────────────────────────────────┘
 ```
+
+Two cooperating behaviors share that core:
+
+- **PD mode** — ultrasonic wall-centering, active by default.
+- **Pixy mode** — vision-driven pillar avoidance, engaged the moment a trained color is confidently seen.
 
 ---
 
@@ -84,20 +61,17 @@ WRO-Future-Engineers-2026/
 |---|-----------|---------------|----------|
 | 1 | Microcontroller | Arduino Uno (ATmega328P, 16 MHz) | Central processing & I/O |
 | 2 | Motor Driver | Cytron MD13S | Speed & direction control |
-| 3 | Drive Motor | Brushed DC — 7.4V | Rear-wheel propulsion |
+| 3 | Drive Motor | Brushed DC — 7.4 V | Rear-wheel propulsion |
 | 4 | Steering Servo | Standard 180° servo | Front Ackermann steering |
 | 5 | Distance Sensors | HC-SR04 × 2 | Left & right wall detection |
-| 6 | Vision Sensor | Pixy2 Camera (SPI mode) | Color pillar recognition |
-| 7 | Battery | 7.4V LiPo 2S | Full system power supply |
-| 8 | Chassis | WLtoys 284010 (1:28 scale) | Compact RC platform |
+| 6 | Vision Sensor | Pixy2 (SPI) | Color pillar recognition |
+| 7 | Battery | 7.4 V LiPo 2S | Full-system power |
+| 8 | Chassis | WLtoys 284010 (1:28) | Compact RC platform |
 
-**Physical Dimensions:**
-- 📐 Size: ~17 × 9 × 7 cm *(within WRO 30×20×30 cm limit ✅)*
-- ⚖️ Mass: ~0.5 kg *(within 1.5 kg limit ✅)*
+> **Envelope** — ~17 × 9 × 7 cm and ~0.5 kg, comfortably inside the 30 × 20 × 30 cm / 1.5 kg limits.
 
 <div align="center">
-<img width="500" src="https://github.com/user-attachments/assets/9c7952be-69de-42f3-882a-6eecc17a7bac" />
-
+<img width="500" src="https://github.com/user-attachments/assets/9c7952be-69de-42f3-882a-6eecc17a7bac" alt="Component layout"/>
 <br/><sub>Robot component layout</sub>
 </div>
 
@@ -105,41 +79,32 @@ WRO-Future-Engineers-2026/
 
 ## Electrical System
 
-### Power Distribution
-
 ```
-LiPo 7.4V
-    │
-    ├──→ Cytron MD13S  ──→  DC Motor
-    │
+LiPo 7.4 V
+    ├──→ Cytron MD13S ──→ DC motor
     └──→ Arduino Vin
-              │
-              └──→ 5V Rail ──→ Servo
-                           ──→ HC-SR04 (×2)
-                           ──→ Pixy2 Camera
+              └──→ 5 V rail ──→ Servo · HC-SR04 ×2 · Pixy2
 ```
 
-### Pin Mapping
+<details>
+<summary><b>Full pin mapping</b> (click to expand)</summary>
 
-| Component | Signal | Arduino Pin | Notes |
-|-----------|--------|-------------|-------|
-| HC-SR04 Left | TRIG | D4 | 10µs pulse trigger |
-| HC-SR04 Left | ECHO | D5 | Return pulse timing |
-| HC-SR04 Right | TRIG | D2 | 10µs pulse trigger |
-| HC-SR04 Right | ECHO | D9 | Return pulse timing |
-| Servo Motor | SIG | A0 | PWM steering output |
-| Cytron MD13S | PWM | D3 | Motor speed control |
-| Cytron MD13S | DIR | D8 | Motor direction |
-| Pixy2 Camera | CS | D10 | SPI chip select |
-| Pixy2 Camera | MOSI | D11 | SPI data out |
-| Pixy2 Camera | MISO | D12 | SPI data in |
-| Pixy2 Camera | SCK | D13 | SPI clock |
+<br/>
 
-📄 **[Full Wiring Diagram (PDF)](Schemes/Schematic_Wiring_Diagram.pdf)**
+| Component | Signal | Pin | Notes |
+|-----------|--------|-----|-------|
+| HC-SR04 Left | TRIG / ECHO | D4 / D5 | trigger pulse · echo timing |
+| HC-SR04 Right | TRIG / ECHO | D2 / D9 | trigger pulse · echo timing |
+| Steering Servo | SIG | A0 | PWM steering output |
+| Cytron MD13S | PWM / DIR | D3 / D8 | speed · direction |
+| Pixy2 Camera | CS · MOSI · MISO · SCK | D10 · D11 · D12 · D13 | SPI bus |
+
+</details>
+
+📄 **[Full wiring diagram (PDF)](Schemes/Schematic_Wiring_Diagram.pdf)**
 
 <div align="center">
-<img width="500"  src="https://github.com/user-attachments/assets/6392126d-c2e6-4422-b1bd-10d1b5243850" />
-
+<img width="500" src="https://github.com/user-attachments/assets/6392126d-c2e6-4422-b1bd-10d1b5243850" alt="Lab setup"/>
 <br/><sub>Development tools and lab setup</sub>
 </div>
 
@@ -147,102 +112,109 @@ LiPo 7.4V
 
 ## Software Architecture
 
-All code is written in **C/C++** using the Arduino IDE. Two sketch modules share a common PD core:
+The firmware is written in **C/C++** on the Arduino IDE. Two sketches share one PD core:
 
 | Module | File | Description |
 |--------|------|-------------|
-| Open Challenge | `Open_Challenge.ino` | Pure wall-following with PD + anti-zigzag |
-| Obstacle Challenge | `Obstacle_Challenge.ino` | Wall-following + Pixy2 mode switching |
+| Open Challenge | `Open_Challenge.ino` | pure wall-following — PD + anti-zigzag |
+| Obstacle Challenge | `Obstacle_Challenge.ino` | wall-following + Pixy2 mode switching |
 
-### PD Control Loop
+Each loop iteration runs the same nine steps:
 
 ```
-Every loop iteration:
-  1. Read HC-SR04 Left + Right (3-sample average each)
-  2. Clamp readings to MAX_VALID_CM (75 cm)
-  3. error = leftDist - rightDist
-  4. If |error| < DEADBAND (0.8 cm) → error = 0
-  5. derivative = LPF( error - lastError )   α = 0.45
-  6. output = KP × error + KD × derivative
-  7. targetAngle = CENTER_ANGLE + output
-  8. servoAngle = LPF( targetAngle )         α = 0.55
-  9. If |servoAngle - CENTER| > 28° → reduce motor speed
+1.  read HC-SR04 left + right  (3-sample average each)
+2.  clamp readings to MAX_VALID_CM = 75 cm
+3.  error = leftDist − rightDist
+4.  if |error| < 0.8 cm  →  error = 0          (deadband)
+5.  derivative = LPF(error − lastError),  α = 0.45
+6.  output = KP·error + KD·derivative
+7.  targetAngle = CENTER_ANGLE + output
+8.  servoAngle = LPF(targetAngle),  α = 0.55
+9.  if |servoAngle − CENTER| > 28°  →  ease off the throttle
 ```
 
-### Tuned Parameters
+<details>
+<summary><b>Tuned parameters</b> (click to expand)</summary>
+
+<br/>
 
 | Parameter | Value | Purpose |
 |-----------|-------|---------|
-| `KP` | 0.10 | Proportional gain — wall centering strength |
-| `KD` | 0.09 | Derivative gain — damping oscillation |
-| `MOTOR_SPEED` | 55 | Cruise PWM (0–255 scale) |
-| `TURN_SPEED` | 45 | Reduced speed on sharp turns |
-| `CENTER_ANGLE` | 90° | Servo straight-ahead position |
-| `ERROR_DEADBAND` | ±0.8 cm | Noise suppression band |
-| `DERIV_ALPHA` | 0.45 | Derivative low-pass filter coefficient |
-| `SERVO_ALPHA` | 0.55 | Servo output smoother coefficient |
-| `MAX_VALID_CM` | 75 cm | Corner spike rejection threshold |
-| `HARD_TURN_DEG` | 28° | Speed reduction trigger angle |
+| `KP` | 0.10 | proportional gain — centering strength |
+| `KD` | 0.09 | derivative gain — oscillation damping |
+| `MOTOR_SPEED` | 55 | cruise PWM (0–255) |
+| `TURN_SPEED` | 45 | reduced speed on sharp turns |
+| `CENTER_ANGLE` | 90° | servo straight-ahead |
+| `ERROR_DEADBAND` | ±0.8 cm | noise suppression band |
+| `DERIV_ALPHA` | 0.45 | derivative low-pass coefficient |
+| `SERVO_ALPHA` | 0.55 | servo output smoother |
+| `MAX_VALID_CM` | 75 cm | corner-spike rejection |
+| `HARD_TURN_DEG` | 28° | speed-reduction trigger |
+
+</details>
 
 ---
 
 ## Wall-Following Controller
 
-Anti-zigzag techniques implemented to ensure smooth, stable navigation:
+A short straight is easy; a clean *lap* is not. Six anti-zigzag measures keep the car glued to the centerline:
 
-| Technique | Implementation | Effect |
-|-----------|---------------|--------|
-| **Error deadband** | Ignore errors ±0.8 cm | Eliminates sensor noise jitter |
-| **Derivative LPF** | α = 0.45 exponential filter | Smooths spike-driven corrections |
-| **Servo smoothing** | α = 0.55 exponential filter | Removes mechanical oscillation |
-| **Corner clamping** | Max 75 cm reading | Rejects false corner wall echoes |
-| **Adaptive speed** | Slow at >28° turn angle | Prevents overshoot on curves |
-| **Sensor fallback** | Mirror opposite side | Handles single-sensor failure |
+| Measure | How | Why it matters |
+|---------|-----|----------------|
+| Error deadband | ignore ±0.8 cm | kills micro-jitter from sensor noise |
+| Derivative LPF | α = 0.45 | smooths spike-driven corrections |
+| Servo smoothing | α = 0.55 | removes mechanical oscillation |
+| Corner clamping | cap at 75 cm | rejects false long-range echoes |
+| Adaptive speed | slow past 28° | prevents overshoot in curves |
+| Sensor fallback | mirror the good side | survives a single dropped sensor |
 
 ---
 
 ## Obstacle Detection & Avoidance
 
-The Pixy2 camera is trained on two color signatures under WRO arena lighting:
+The Pixy2 is trained on two color signatures under arena lighting. Each pillar dictates which side to pass on:
 
-| Pillar | Signature | WRO Rule | Response |
+| Pillar | Signature | WRO rule | Response |
 |--------|-----------|----------|----------|
-| 🟢 Green | Sig 1 | Pass on LEFT | Steer left (>90°) |
-| 🔴 Red | Sig 2 | Pass on RIGHT | Steer right (<90°) |
+| 🟢 Green | Sig 1 | pass on the **left** | steer left, servo > 90° |
+| 🔴 Red | Sig 2 | pass on the **right** | steer right, servo < 90° |
 
-### Steering Lookup Table
+<details>
+<summary><b>Steering lookup by pillar position</b> (click to expand)</summary>
 
-| Color | X < 120 px | X 120–170 px | X > 170 px |
+<br/>
+
+| Color | X &lt; 120 px | X 120–170 px | X &gt; 170 px |
 |-------|-----------|--------------|-----------|
-| 🟢 Green | Hard Left — 135° | Medium Left — 120° | Soft Left — 105° |
-| 🔴 Red | Soft Right — 75° | Medium Right — 60° | Hard Right — 45° |
+| 🟢 Green | hard left — 135° | medium left — 120° | soft left — 105° |
+| 🔴 Red | soft right — 75° | medium right — 60° | hard right — 45° |
 
-### Hysteresis Mode Manager
+</details>
+
+The handoff between wall-following and vision is governed by a hysteresis manager so the two never fight:
 
 ```
-Detection filter:   min area 200 px²  ·  X range 20–300 px
-Enter Pixy Mode:    2 consecutive valid frames
-Exit to PID Mode:   3 consecutive missed frames
-Minimum hold time:  280 ms  (prevents rapid switching)
-Slew rate limit:    6°/step (smooth servo transitions)
+detection filter :  area ≥ 200 px²  ·  X within 20–300 px
+enter Pixy mode  :  2 consecutive valid frames
+exit to PD mode  :  3 consecutive misses
+minimum hold     :  280 ms
+servo slew limit :  6° per step
 ```
 
 ---
 
 ## 3D Design
 
-The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-printed mounts for all electronics and sensors.
+The car rides on a WLtoys 284010 (1:28-scale) RC base, fitted with custom 3D-printed mounts for every board and sensor.
 
-**Print Settings:** PLA · 20% infill · 0.2 mm layer height
+> **Print settings** — PLA · 20% infill · 0.2 mm layers.
 
 <div align="center">
-<img width="500" src="https://github.com/user-attachments/assets/450ecdc3-dc6c-4dc1-82c0-f9bb397f3465" />
-
-<br/><sub>3D printed electronics tray and sensor mounts</sub>
+<img width="500" src="https://github.com/user-attachments/assets/450ecdc3-dc6c-4dc1-82c0-f9bb397f3465" alt="3D design"/>
+<br/><sub>3D-printed electronics tray and sensor mounts</sub>
 </div>
 
-3D files: [`<img width="1195" height="896" alt="image" src="https://github.com/user-attachments/assets/deec2a5c-afaf-428c-babc-f4ac97a8620d" />
-`](Models/)
+Printable files live in [`Models/`](Models/).
 
 ---
 
@@ -251,23 +223,14 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 <div align="center">
 <table>
   <tr>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/39ed9b05-d331-49be-9855-8c95ed0cba1f" 
-"/><br/><sub><b>Front</b></sub></td>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/7933ec02-1d54-4cbe-b85c-87f1342e2a5f" 
-                           
-<br/><sub><b>Back</b></sub></td>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/9daa717b-47a3-42c6-bf30-d1f42c404ae9" 
-    />
-    
-<br/><sub><b>Left</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/39ed9b05-d331-49be-9855-8c95ed0cba1f"/><br/><sub><b>Front</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/7933ec02-1d54-4cbe-b85c-87f1342e2a5f"/><br/><sub><b>Back</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/9daa717b-47a3-42c6-bf30-d1f42c404ae9"/><br/><sub><b>Left</b></sub></td>
   </tr>
   <tr>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/b40a195f-4771-49b5-b7de-987e301bb243" />
-<br/><sub><b>Right</b></sub></td>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/e34e684f-ff2f-4c06-8861-a87f1982d041" />
-<br/><sub><b>Top</b></sub></td>
-    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/6788e1ae-b306-427e-af6d-16fb11b72219" />
-<br/><sub><b>Bottom</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/b40a195f-4771-49b5-b7de-987e301bb243"/><br/><sub><b>Right</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/e34e684f-ff2f-4c06-8861-a87f1982d041"/><br/><sub><b>Top</b></sub></td>
+    <td align="center"><img width="230" src="https://github.com/user-attachments/assets/6788e1ae-b306-427e-af6d-16fb11b72219"/><br/><sub><b>Bottom</b></sub></td>
   </tr>
 </table>
 </div>
@@ -278,14 +241,14 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 
 | Test | Method | Outcome |
 |------|--------|---------|
-| Ultrasonic accuracy | Ruler comparison at known distances | Tuned MAX_VALID_CM = 75 cm |
-| Servo center | Straight-line drive & visual alignment | CENTER_ANGLE = 90° |
-| Motor dead zone | Minimum effective PWM sweep | Confirmed MOTOR_SPEED = 55 |
-| PD field tuning | Iterative KP/KD adjustment on track | KP=0.10, KD=0.09 |
-| Pixy2 training | Arena lighting color signature capture | Sigs 1 & 2 trained |
-| Anti-zigzag | DERIV_ALPHA + SERVO_ALPHA sweep | Oscillation eliminated |
-| 3-lap validation | Full run on WRO-spec track | ✅ Completed |
-| Pillar avoidance | All color × position combinations | ✅ No collisions |
+| Ultrasonic accuracy | ruler comparison at known distances | `MAX_VALID_CM` set to 75 cm |
+| Servo center | straight-line drive + visual check | `CENTER_ANGLE` = 90° |
+| Motor dead zone | minimum-PWM sweep | `MOTOR_SPEED` = 55 |
+| PD field tuning | iterative KP/KD on track | KP = 0.10, KD = 0.09 |
+| Pixy2 training | capture signatures under arena light | Sigs 1 & 2 trained |
+| Anti-zigzag | α-coefficient sweep | oscillation removed |
+| 3-lap validation | full WRO-spec run | ✅ completed |
+| Pillar avoidance | every color × position | ✅ no collisions |
 
 ---
 
@@ -293,11 +256,11 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 
 | Metric | Result |
 |--------|--------|
-| 3-lap completion | ✅ Consistent lap times |
-| Wall-centering deviation | < 2 cm on straight segments |
-| Pillar recognition accuracy | > 95% under arena lighting |
-| Obstacle avoidance | ✅ Smooth — zero collisions |
-| Mode switching | ✅ Clean PID ↔ Pixy transitions |
+| Three-lap completion | ✅ consistent lap times |
+| Wall-centering deviation | < 2 cm on straights |
+| Pillar recognition | > 95% under arena lighting |
+| Obstacle avoidance | ✅ smooth, zero contact |
+| Mode switching | ✅ clean PD ↔ Pixy handoffs |
 
 ---
 
@@ -305,8 +268,23 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 
 | Challenge | Description | File |
 |-----------|-------------|------|
-| Open Challenge | 3-lap autonomous wall-following | [`videos/Open_Challenge.mp4`](videos/) |
-| Obstacle Challenge | Full pillar detection + avoidance | [`videos/Obstacle_Challenge.mp4`](videos/) |
+| Open Challenge | three-lap autonomous wall-following | [`videos/Open_Challenge.mp4`](videos/) |
+| Obstacle Challenge | full pillar detection + avoidance | [`videos/Obstacle_Challenge.mp4`](videos/) |
+
+---
+
+## Team in Action
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><img width="300" src="docs/team_photos/team_1.jpg"/></td>
+    <td align="center"><img width="240" src="docs/team_photos/team_2.jpg"/></td>
+    <td align="center"><img width="240" src="docs/team_photos/team_3.jpg"/></td>
+  </tr>
+  <tr><td colspan="3" align="center"><sub>The Motions at the AUM robotics lab — coding, tuning, and testing on the arena.</sub></td></tr>
+</table>
+</div>
 
 ---
 
@@ -314,11 +292,11 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 
 <div align="center">
 
-| Name | Role |
-|------|------|
-| **Abdullah Al-Otaibi** — عبدالله العتيبي | Hardware design · System integration |
-| **Daoud Al-Aneizi** — داود العنيزي | Software development · PD controller |
-| **Yousef Al-ostath** — يوسف الاستاد | Vision system · Testing & calibration |
+| Member | Responsibility |
+|--------|----------------|
+| **Abdullah Al-Otaibi** · عبدالله العتيبي | Hardware design · System integration |
+| **Daoud Al-Aneizi** · داود العنيزي | Software development · PD controller |
+| **Yousef Al-ostath** · يوسف الاستاد | Vision system · Testing & calibration |
 
 </div>
 
@@ -326,8 +304,7 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 
 <div align="center">
 
-**The Motions — Digital Innovations**
-
+**The Motions · Digital Innovations**
 *Kuwait · WRO Future Engineers 2026*
 
 </div>
