@@ -139,7 +139,7 @@ LiPo 7.4V
 
 <div align="center">
 <img width="500"  src="https://github.com/user-attachments/assets/6392126d-c2e6-4422-b1bd-10d1b5243850" />
-" alt="Lab Setup"/>
+
 <br/><sub>Development tools and lab setup</sub>
 </div>
 
