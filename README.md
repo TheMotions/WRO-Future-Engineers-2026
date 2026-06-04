@@ -316,7 +316,7 @@ The robot is built on the WLtoys 284010 (1:28 scale) RC platform with custom 3D-
 |------|------|
 | **Abdullah Al-Otaibi** — عبدالله العتيبي | Hardware design · System integration |
 | **Daoud Al-Aneizi** — داود العنيزي | Software development · PD controller |
-| **Yousef Al-Ustad** — يوسف الاستاد | Vision system · Testing & calibration |
+| **Yousef Al-ostath** — يوسف الاستاد | Vision system · Testing & calibration |
 
 </div>
 
